@@ -1,4 +1,4 @@
-module gitlab.aeroidea.ru/megafon/filestorage-lib
+module github.com/AeroAgency/golang-filestorage-lib
 
 go 1.13
 
