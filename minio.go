@@ -76,3 +76,9 @@ func (m *MinioFileStorage) RemoveFile(folderName string, filename string) error 
 	err := m.client.RemoveObject(folderName, filename)
 	return err
 }
+
+
+func (m *MinioFileStorage) RemoveBucket(bucketName string) error {
+	err := m.client.RemoveBucket(bucketName)
+	return err
+}
