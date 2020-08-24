@@ -96,3 +96,15 @@ func (m *MinioFileStorage) RemoveFolder(bucketName string, folderName string) er
 	}
 	return nil
 }
+
+func (m *MinioFileStorage) GetFilesIntoFolder(bucketName string, folderName string) ([]string, error) {
+	var filePaths []string
+	objectCh := m.client.ListObjects(bucketName, folderName, true, nil)
+	for object := range objectCh {
+		if object.Err != nil {
+			return nil, object.Err
+		}
+		filePaths = append(filePaths, object.Key)
+	}
+	return filePaths, nil
+}
