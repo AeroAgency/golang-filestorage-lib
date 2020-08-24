@@ -1,9 +1,9 @@
 package storage
 
 import (
+	"fmt"
 	"github.com/minio/minio-go/v6"
 	"io"
-	"log"
 	"net/url"
 	"time"
 )
@@ -82,21 +82,15 @@ func (m *MinioFileStorage) RemoveFolder(bucketName string, folderName string) er
 	objectsCh := make(chan string)
 	go func() {
 		defer close(objectsCh)
-		// List all objects from a bucket-name with a matching prefix.
-		for object := range m.client.ListObjects(bucketName, folderName, true, nil) {
+		objectCh := m.client.ListObjects(bucketName, folderName, true, nil)
+		for object := range objectCh {
 			if object.Err != nil {
-				log.Fatalln(object.Err)
+				fmt.Println(object.Err)
+				return
 			}
 			objectsCh <- object.Key
 		}
 	}()
-	// List all objects from a bucket-name with a matching prefix.
-	for object := range m.client.ListObjects(bucketName, folderName, true, nil) {
-		if object.Err != nil {
-			return object.Err
-		}
-		objectsCh <- object.Key
-	}
 	for rErr := range m.client.RemoveObjects(bucketName, objectsCh) {
 		return rErr.Err
 	}
