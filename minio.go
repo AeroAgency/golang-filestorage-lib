@@ -77,8 +77,18 @@ func (m *MinioFileStorage) RemoveFile(folderName string, filename string) error 
 	return err
 }
 
-
-func (m *MinioFileStorage) RemoveBucket(bucketName string) error {
-	err := m.client.RemoveBucket(bucketName)
-	return err
+func (m *MinioFileStorage) RemoveFolder(bucketName string, folderName string) error {
+	objectsCh := make(chan string)
+	defer close(objectsCh)
+	// List all objects from a bucket-name with a matching prefix.
+	for object := range m.client.ListObjects(bucketName, folderName, true, nil) {
+		if object.Err != nil {
+			return object.Err
+		}
+		objectsCh <- object.Key
+	}
+	for rErr := range m.client.RemoveObjects(bucketName, objectsCh) {
+		return rErr.Err
+	}
+	return nil
 }
