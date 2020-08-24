@@ -12,6 +12,5 @@ type FileStorageInterface interface {
 	DownloadFile(folderName string, fileName string, saveFolder string) error
 	GetFileLink(folderName string, filename string, expires time.Duration) (string, error)
 	RemoveFile(folderName string, filename string) error
-	RemoveBucket(bucketName string) error
-	RemoveFolder(folderName string) error
+	RemoveFolder(bucketName string, folderName string) error
 }
