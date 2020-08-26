@@ -70,7 +70,7 @@ func (m *MinioFileStorage) GetFileLink(folderName string, filename string, expir
 	if err != nil {
 		return "", err
 	}
-	return url.Host + url.Path + "?" + url.RawQuery, nil
+	return url.Path + "?" + url.RawQuery, nil
 }
 
 func (m *MinioFileStorage) RemoveFile(folderName string, filename string) error {
