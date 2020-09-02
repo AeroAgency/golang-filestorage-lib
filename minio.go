@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/url"
 	"time"
+	"mime"
 )
 
 type MinioFileStorage struct {
@@ -62,7 +63,12 @@ func (m *MinioFileStorage) DownloadFile(folderName string, fileName string, save
 
 func (m *MinioFileStorage) GetFileLink(folderName string, fileName string, filePath string, expires time.Duration) (string, error) {
 	reqParams := make(url.Values)
-	reqParams.Set("response-content-disposition", "attachment; filename=\""+fileName+"\"")
+	reqParams.Set("response-Content-Disposition", "attachment; filename=\""+fileName+"\"")
+	mime, err := mimetype.DetectFile(fileName)
+	if err != nil {
+		return "", err
+	}
+	reqParams.Set("response-Content-Type", mime)
 	url, err := m.client.PresignedGetObject(folderName,
 		filePath,
 		expires,
