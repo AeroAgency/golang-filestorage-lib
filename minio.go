@@ -60,10 +60,11 @@ func (m *MinioFileStorage) DownloadFile(folderName string, fileName string, save
 	return nil
 }
 
-func (m *MinioFileStorage) GetFileLink(folderName string, filename string, expires time.Duration) (string, error) {
+func (m *MinioFileStorage) GetFileLink(folderName string, fileName string, filePath string, expires time.Duration) (string, error) {
 	reqParams := make(url.Values)
+	reqParams.Set("response-content-disposition", "attachment; filename=\""+fileName+"\"")
 	url, err := m.client.PresignedGetObject(folderName,
-		filename,
+		filePath,
 		expires,
 		reqParams,
 	)
@@ -73,8 +74,8 @@ func (m *MinioFileStorage) GetFileLink(folderName string, filename string, expir
 	return url.Path + "?" + url.RawQuery, nil
 }
 
-func (m *MinioFileStorage) RemoveFile(folderName string, filename string) error {
-	err := m.client.RemoveObject(folderName, filename)
+func (m *MinioFileStorage) RemoveFile(folderName string, fileName string) error {
+	err := m.client.RemoveObject(folderName, fileName)
 	return err
 }
 
