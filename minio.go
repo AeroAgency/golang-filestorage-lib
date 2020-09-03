@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"github.com/minio/minio-go/v6"
 	"io"
-	"net/url"
-	"time"
 	"mime"
+	"net/url"
+	"path/filepath"
+	"time"
 )
 
 type MinioFileStorage struct {
@@ -45,7 +46,7 @@ func (m *MinioFileStorage) UploadFile(folderName string, fileName string, file i
 		fileName,
 		file,
 		size,
-		minio.PutObjectOptions{ContentType: "application/octet-stream"},
+		minio.PutObjectOptions{ContentType: m.getExtByPath(fileName)},
 	)
 	if err != nil {
 		return err
@@ -64,11 +65,6 @@ func (m *MinioFileStorage) DownloadFile(folderName string, fileName string, save
 func (m *MinioFileStorage) GetFileLink(folderName string, fileName string, filePath string, expires time.Duration) (string, error) {
 	reqParams := make(url.Values)
 	reqParams.Set("response-Content-Disposition", "attachment; filename=\""+fileName+"\"")
-	mime, err := mimetype.DetectFile(fileName)
-	if err != nil {
-		return "", err
-	}
-	reqParams.Set("response-Content-Type", mime)
 	url, err := m.client.PresignedGetObject(folderName,
 		filePath,
 		expires,
@@ -114,4 +110,22 @@ func (m *MinioFileStorage) GetFilesIntoFolder(bucketName string, folderName stri
 		filePaths = append(filePaths, object.Key)
 	}
 	return filePaths, nil
+}
+
+func (m *MinioFileStorage) getExtByPath(path string) string {
+	_ = mime.AddExtensionType(".doc", "application/msword")
+	_ = mime.AddExtensionType(".docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+	_ = mime.AddExtensionType(".xls", "application/vnd.ms-excel")
+	_ = mime.AddExtensionType(".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	_ = mime.AddExtensionType(".ppt", "application/vnd.ms-powerpoint")
+	_ = mime.AddExtensionType(".pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation")
+	_ = mime.AddExtensionType(".bmp", "image/bmp")
+	_ = mime.AddExtensionType(".rtf", "application/rtf")
+	_ = mime.AddExtensionType(".txt", "text/plain")
+	_ = mime.AddExtensionType(".zip", "application/zip")
+	mime := mime.TypeByExtension(filepath.Ext(path))
+	if mime == "" {
+		mime = "text/plain"
+	}
+	return mime
 }
