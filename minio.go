@@ -130,3 +130,14 @@ func (m *MinioFileStorage) getExtByPath(path string) string {
 	}
 	return mime
 }
+
+func (m *MinioFileStorage) CheckIfFileExists(bucketName string, filePath string) bool {
+	objInfo, err := m.client.StatObject(bucketName, filePath, minio.StatObjectOptions{})
+	if err != nil {
+		return false
+	}
+	if objInfo.Size > 0 {
+		return true
+	}
+	return false
+}
