@@ -14,4 +14,5 @@ type FileStorageInterface interface {
 	RemoveFile(folderName string, fileName string) error
 	RemoveFolder(bucketName string, folderName string) error
 	GetFilesIntoFolder(bucketName string, folderName string) ([]string, error)
+	CheckIfFileExists(bucketName string, filePath string) bool
 }
