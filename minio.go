@@ -123,7 +123,7 @@ func (m *MinioFileStorage) getExtByPath(path string) string {
 	_ = mime.AddExtensionType(".bmp", "image/bmp")
 	_ = mime.AddExtensionType(".rtf", "application/rtf")
 	_ = mime.AddExtensionType(".txt", "text/plain")
-	_ = mime.AddExtensionType(".csv", "application/csv")
+	_ = mime.AddExtensionType(".csv", "text/csv")
 	_ = mime.AddExtensionType(".zip", "application/zip")
 	mime := mime.TypeByExtension(filepath.Ext(path))
 	if mime == "" {
