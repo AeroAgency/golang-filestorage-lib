@@ -62,6 +62,14 @@ func (m *MinioFileStorage) DownloadFile(folderName string, fileName string, save
 	return nil
 }
 
+func (m *MinioFileStorage) GetFile(bucketName string, fileName string) (io.Reader, error) {
+	res, err := m.client.GetObject(bucketName, fileName, minio.GetObjectOptions{})
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
 func (m *MinioFileStorage) GetFileLink(folderName string, fileName string, filePath string, expires time.Duration) (string, error) {
 	reqParams := make(url.Values)
 	reqParams.Set("response-Content-Disposition", "attachment; filename=\""+fileName+"\"")

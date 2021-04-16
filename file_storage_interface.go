@@ -11,6 +11,7 @@ type FileStorageInterface interface {
 	UploadFile(folderName string, fileName string, file io.Reader, size int64) error
 	DownloadFile(folderName string, fileName string, saveFolder string) error
 	GetFileLink(folderName string, fileName string, filePath string, expires time.Duration) (string, error)
+	GetFile(bucketName string, fileName string) (io.Reader, error)
 	RemoveFile(folderName string, fileName string) error
 	RemoveFolder(bucketName string, folderName string) error
 	GetFilesIntoFolder(bucketName string, folderName string) ([]string, error)
